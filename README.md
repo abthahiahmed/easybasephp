@@ -7,7 +7,7 @@ These are simple example below :
 <br>
 <h2>Example : To initialize all the cradentials for database connection.</h2>
 
-```
+```php
 $base = new EazyBase("localhost", "root", "12345678");
 ```
 <br>
@@ -15,7 +15,7 @@ Example : To connect with database
 <br>
 <h2>Example : To connect with database</h2>
 
-```
+```php
 if ($base->connect()){
 	echo "Connected!<br>";
 }else{
@@ -25,7 +25,7 @@ if ($base->connect()){
 <br>
 <h2>Example : To create database</h2>
 
-```
+```php
 if ($base->createBase("mytest")){
 	echo "Database Created!";
 }else{
@@ -35,7 +35,7 @@ if ($base->createBase("mytest")){
 <br>
 <h2>Example : To create database</h2>
 
-```
+```php
 if ($base->createBase("mytest")){
 	echo "Database Created!";
 }else{
@@ -46,7 +46,7 @@ if ($base->createBase("mytest")){
 <br>
 <h2>Example : To create table</h2>
 
-```
+```php
 $result = $base->createTable("users", [
 	'id' => 'int not null auto_increment',
 	'name' => 'varchar(255)',
@@ -58,7 +58,7 @@ $result = $base->createTable("users", [
 <br>
 <h2>Example : To insert data into table</h2>
 
-```
+```php
 $base->insert("users", [
 	'name' => 'myname',
 	'email' => "email@gmail.com",
@@ -69,7 +69,7 @@ $base->insert("users", [
 <br>
 <h2>Example : To select data from table</h2>
 
-```
+```php
 $data = $base->select("users", [], [], [], []);
 echo "<pre>";
 print_r($data);
@@ -79,7 +79,7 @@ echo "</pre>";
 <br>
 <h2>Example : To select data from table with specific column</h2>
 
-```
+```php
 $data = $base->select("users", [name, email], [], [], []);
 echo "<pre>";
 print_r($data);
@@ -89,7 +89,7 @@ echo "</pre>";
 <br>
 <h2>Example : To select data from table with condition</h2>
 
-```
+```php
 $data = $base->select("users", [name, email], [], [], [	
 	'email' => ['=', 'email@gmail.com'],
 ]);
@@ -101,7 +101,7 @@ echo "</pre>";
 <br>
 <h2>Example : To select data from table with sorting</h2>
 
-```
+```php
 $data = $base->select("users", [name, email], ['ASC', 'id'], [], [	
 	'email' => ['=', 'email@gmail.com'],
 ]);
@@ -113,7 +113,7 @@ echo "</pre>";
 <br>
 <h2>Example : To select data from table with limitation</h2>
 
-```
+```php
 $data = $base->select("users", [name, email], ['ASC', 'id'], [0, 50], [	
 	'email' => ['=', 'email@gmail.com'],
 ]);
@@ -125,7 +125,7 @@ echo "</pre>";
 <br>
 <h2>Example : To update data in a table</h2>
 
-```
+```php
 $base->update("users", [
 	'name' => 'New Name'
 ], [
@@ -136,7 +136,7 @@ $base->update("users", [
 <br>
 <h2>Example : To delete data from table</h2>
 
-```
+```php
 // With equal operator (=)
 $base->delete("users", [
 	'id' => ['=', 1]]
