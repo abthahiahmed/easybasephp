@@ -107,7 +107,7 @@ echo "</pre>";
 <h2>Example : To select data from table with specific column</h2>
 
 ```php
-$data = $base->select("users", [name, email], [], [], []);
+$data = $base->select("users", ['name', 'email'], [], [], []);
 echo "<pre>";
 print_r($data);
 echo "</pre>";
@@ -117,7 +117,7 @@ echo "</pre>";
 <h2>Example : To select data from table with condition</h2>
 
 ```php
-$data = $base->select("users", [name, email], [], [], [	
+$data = $base->select("users", ['name', 'email'], [], [], [	
 	'email' => ['=', 'email@gmail.com'],
 ]);
 echo "<pre>";
@@ -129,7 +129,7 @@ echo "</pre>";
 <h2>Example : To select data from table with sorting</h2>
 
 ```php
-$data = $base->select("users", [name, email], ['ASC', 'id'], [], [	
+$data = $base->select("users", ['name', 'email'], ['ASC', 'id'], [], [	
 	'email' => ['=', 'email@gmail.com'],
 ]);
 echo "<pre>";
@@ -141,7 +141,7 @@ echo "</pre>";
 <h2>Example : To select data from table with limitation</h2>
 
 ```php
-$data = $base->select("users", [name, email], ['ASC', 'id'], [0, 50], [	
+$data = $base->select("users", ['name', 'email'], ['ASC', 'id'], [0, 50], [	
 	'email' => ['=', 'email@gmail.com'],
 ]);
 echo "<pre>";
