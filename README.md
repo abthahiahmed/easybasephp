@@ -205,3 +205,6 @@ $base->delete("users", [
 	'id' => ['in', [1, 2, 3]]
 ]);
 ```
+
+This is simple project which can help you to build PHP applications faster. 
+Happy Coding...
