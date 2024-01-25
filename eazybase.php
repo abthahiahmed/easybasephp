@@ -9,31 +9,11 @@
 		private $name;
 		private $db;
 
-		static function C_EQUAL($key, $value){
-			return array("$key = ?" => $value)[0];
-		}
-		static function C_LIKE($key, $value){
-			return [
-				"$key LIKE ?" => $value
-			];
-		}
-
-		static function C_NEQUAL($key, $value){
-			return [
-				"$key != ?" => $value
-			];
-		}
-
-
-
 		function __construct($host, $user, $pass){
 			$this->host = $host;
 			$this->user = $user;
 			$this->pass = $pass;
 		}
-
-
-
 
 		function connect(){
 			$this->db 	= new mysqli($this->host, $this->user, $this->pass);
@@ -41,10 +21,12 @@
 		}
 
 
-		function createBase($name){
-			if ($this->db->query("CREATE DATABASE $name")){
-				$this->name = $name;
+		function createBase($name, $charset = 'utf8mb4', $collate = 'utf8mb4_unicode_ci'){
+			if ($this->db->query("CREATE DATABASE $name CHARACTER SET $charset COLLATE $collate;")){
+				$this->selectBase($name);
 				return true;
+			}else{
+				echo $this->getError();
 			}
 			return false;
 		}
@@ -91,6 +73,37 @@
 			return false;
 		}
 
+		function insertMore($table, $data){
+			if (!is_array($data)) return false;
+			if (count($data) < 1) return false;
+
+
+			$columns 	= array_keys($data[0]);
+
+			$values 	= [];
+			$columnStr 	= implode(',', $columns);
+			$sql 		= "INSERT INTO $table ($columnStr) VALUES ";
+			
+
+			for ($i = 0; $i < count($data); $i++){
+				$value = array_values($data[$i]);
+				$values = array_merge($values, $value);
+
+				$valuesStr 	= substr(str_repeat('?,', count($value)), 0, -1);
+				$sql        .= "($valuesStr),";
+			}
+			$sql        = substr($sql, 0, -1);
+			
+			echo $sql;
+			$stmt 		= $this->db->prepare($sql);
+
+			if ($stmt->execute($values)) return true;
+			return false;
+		}
+
+
+
+
 		function select($name, $field, $sort, $limit, $condition){
 
 			if (!is_array($field)) return false;
@@ -100,28 +113,60 @@
 
 			$values = [];
 
+
+
 			$columns = array_keys($condition);
-
 			$format_str = '';
-
+		
 			for ($i = 0; $i < count($columns); $i++){
-				$column = $columns[$i];
-				$data = $condition[$column];
-				$opt = $data[0];
 
-				$isArray = is_array($data[1]);
+				if ($columns[$i] !== 'or' && $columns[$i] !== 'and'){
 
-				$value = $data[1];
+					$column = $columns[$i];
+					$data = $condition[$column];
+					$opt = $data[0];
 
-				if ($isArray){
-					$q = substr(str_repeat('?,', count($value)), 0, -1);
-					$format_str .= "$column $opt ($q) AND ";
-					$values = array_merge($values, $value);
+					$isArray = is_array($data[1]);
+
+					$value = $data[1];
+
+					if ($isArray){
+						$q = substr(str_repeat('?,', count($value)), 0, -1);
+						$format_str .= "$column $opt ($q) AND ";
+						$values = array_merge($values, $value);
+					}else{
+						$format_str .= "$column $opt ? AND ";
+						array_push($values, $value);
+					}
+
 				}else{
-					$format_str .= "$column $opt ? AND ";
-					array_push($values, $value);
+					$inner_columns = array_keys($condition[$columns[$i]]);
+					$format_str .= ' (';
+					for ($j = 0; $j < count($inner_columns); $j++){
+
+						$column = $inner_columns[$j];
+						$data = $condition[$columns[$i]][$column];
+						$opt = $data[0];
+
+						$isArray = is_array($data[1]);
+
+						$value = $data[1];
+
+						if ($isArray){
+							$q = substr(str_repeat('?,', count($value)), 0, -1);
+							$format_str .= "$column $opt ($q) {$columns[$i]} ";
+							$values = array_merge($values, $value);
+						}else{
+							$format_str .= "$column $opt ? {$columns[$i]} ";
+							array_push($values, $value);
+						}
+
+					}
+					$format_str 	= substr($format_str, 0, -4);
+					$format_str .= ') AND ';
+
 				}
-				
+
 			}
 
 			$format_str 	= substr($format_str, 0, -4);
@@ -139,7 +184,7 @@
 			if (count($field) > 0) $field_sql = implode(',', $field);
 
 			$sql = "SELECT $field_sql FROM $name $where_sql $sort_sql $limit_sql";
-			
+			echo $sql;
 			$stmt = $this->db->prepare($sql);
 
 			if ($stmt->execute($values)){
@@ -167,23 +212,54 @@
 			$format_str = '';
 
 			for ($i = 0; $i < count($columns); $i++){
-				$column = $columns[$i];
-				$data = $condition[$column];
-				$opt = $data[0];
 
-				$isArray = is_array($data[1]);
+				if ($columns[$i] !== 'or' && $columns[$i] !== 'and'){
 
-				$value = $data[1];
+					$column = $columns[$i];
+					$data = $condition[$column];
+					$opt = $data[0];
 
-				if ($isArray){
-					$q = substr(str_repeat('?,', count($value)), 0, -1);
-					$format_str .= "$column $opt ($q) AND ";
-					$values = array_merge($values, $value);
+					$isArray = is_array($data[1]);
+
+					$value = $data[1];
+
+					if ($isArray){
+						$q = substr(str_repeat('?,', count($value)), 0, -1);
+						$format_str .= "$column $opt ($q) AND ";
+						$values = array_merge($values, $value);
+					}else{
+						$format_str .= "$column $opt ? AND ";
+						array_push($values, $value);
+					}
+
 				}else{
-					$format_str .= "$column $opt ? AND ";
-					array_push($values, $value);
+					$inner_columns = array_keys($condition[$columns[$i]]);
+					$format_str .= ' (';
+					for ($j = 0; $j < count($inner_columns); $j++){
+
+						$column = $inner_columns[$j];
+						$data = $condition[$columns[$i]][$column];
+						$opt = $data[0];
+
+						$isArray = is_array($data[1]);
+
+						$value = $data[1];
+
+						if ($isArray){
+							$q = substr(str_repeat('?,', count($value)), 0, -1);
+							$format_str .= "$column $opt ($q) {$columns[$i]} ";
+							$values = array_merge($values, $value);
+						}else{
+							$format_str .= "$column $opt ? {$columns[$i]} ";
+							array_push($values, $value);
+						}
+
+					}
+					$format_str 	= substr($format_str, 0, -4);
+					$format_str .= ') AND ';
+
 				}
-				
+
 			}
 
 			$format_str 	= substr($format_str, 0, -4);
@@ -235,25 +311,55 @@
 			$format_str = '';
 
 			for ($i = 0; $i < count($columns); $i++){
-				$column = $columns[$i];
-				$data = $condition[$column];
-				$opt = $data[0];
 
-				$isArray = is_array($data[1]);
+				if ($columns[$i] !== 'or' && $columns[$i] !== 'and'){
 
-				$value = $data[1];
+					$column = $columns[$i];
+					$data = $condition[$column];
+					$opt = $data[0];
 
-				if ($isArray){
-					$q = substr(str_repeat('?,', count($value)), 0, -1);
-					$format_str .= "$column $opt ($q) AND ";
-					$values = array_merge($values, $value);
+					$isArray = is_array($data[1]);
+
+					$value = $data[1];
+
+					if ($isArray){
+						$q = substr(str_repeat('?,', count($value)), 0, -1);
+						$format_str .= "$column $opt ($q) AND ";
+						$values = array_merge($values, $value);
+					}else{
+						$format_str .= "$column $opt ? AND ";
+						array_push($values, $value);
+					}
+
 				}else{
-					$format_str .= "$column $opt ? AND ";
-					array_push($values, $value);
+					$inner_columns = array_keys($condition[$columns[$i]]);
+					$format_str .= ' (';
+					for ($j = 0; $j < count($inner_columns); $j++){
+
+						$column = $inner_columns[$j];
+						$data = $condition[$columns[$i]][$column];
+						$opt = $data[0];
+
+						$isArray = is_array($data[1]);
+
+						$value = $data[1];
+
+						if ($isArray){
+							$q = substr(str_repeat('?,', count($value)), 0, -1);
+							$format_str .= "$column $opt ($q) {$columns[$i]} ";
+							$values = array_merge($values, $value);
+						}else{
+							$format_str .= "$column $opt ? {$columns[$i]} ";
+							array_push($values, $value);
+						}
+
+					}
+					$format_str 	= substr($format_str, 0, -4);
+					$format_str .= ') AND ';
+
 				}
+
 			}
-
-
 
 			$format_str 	= substr($format_str, 0, -4);
 
@@ -267,8 +373,8 @@
 
 			if ($stmt->execute($values)){
 				$result = $stmt->get_result();
-				$data = $result->fetch_all(MYSQLI_ASSOC);
-				return $data;
+				// $data = $result->fetch_all(MYSQLI_ASSOC);
+				return $result;
 			}
 
 			return false;
@@ -286,32 +392,66 @@
 			$format_str = '';
 
 			for ($i = 0; $i < count($columns); $i++){
-				$column = $columns[$i];
-				$data = $condition[$column];
-				$opt = $data[0];
 
-				$isArray = is_array($data[1]);
+				if ($columns[$i] !== 'or' && $columns[$i] !== 'and'){
 
-				$value = $data[1];
+					$column = $columns[$i];
+					$data = $condition[$column];
+					$opt = $data[0];
 
-				if ($isArray){
-					$q = substr(str_repeat('?,', count($value)), 0, -1);
-					$format_str .= "$column $opt ($q) AND";
-					$values = array_merge($values, $value);
+					$isArray = is_array($data[1]);
+
+					$value = $data[1];
+
+					if ($isArray){
+						$q = substr(str_repeat('?,', count($value)), 0, -1);
+						$format_str .= "$column $opt ($q) AND ";
+						$values = array_merge($values, $value);
+					}else{
+						$format_str .= "$column $opt ? AND ";
+						array_push($values, $value);
+					}
+
 				}else{
-					$format_str .= "$column $opt ? AND";
-					array_push($values, $value);
+					$inner_columns = array_keys($condition[$columns[$i]]);
+					$format_str .= ' (';
+					for ($j = 0; $j < count($inner_columns); $j++){
+
+						$column = $inner_columns[$j];
+						$data = $condition[$columns[$i]][$column];
+						$opt = $data[0];
+
+						$isArray = is_array($data[1]);
+
+						$value = $data[1];
+
+						if ($isArray){
+							$q = substr(str_repeat('?,', count($value)), 0, -1);
+							$format_str .= "$column $opt ($q) {$columns[$i]} ";
+							$values = array_merge($values, $value);
+						}else{
+							$format_str .= "$column $opt ? {$columns[$i]} ";
+							array_push($values, $value);
+						}
+
+					}
+					$format_str 	= substr($format_str, 0, -4);
+					$format_str .= ') AND ';
+
 				}
-				
+
 			}
 
-			$format_str 	= substr($format_str, 0, -3);
+			$format_str 	= substr($format_str, 0, -4);
 
 			$sql = "DELETE FROM $name WHERE $format_str";
 			
 			$stmt = $this->db->prepare($sql);
 
 			if ($stmt->execute($values)) return true;
+			else{
+				echo $this->getError();
+			}
 
 			return false;
 		}	
@@ -321,6 +461,8 @@
 			return false;
 		}
 
-		
+		function getError(){
+			return $this->db->error();
+		}
 
 	}

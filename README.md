@@ -1,7 +1,7 @@
 <h1>EasyBase</h1>
 <h3>EasyBase is a simple PHP library to use MySQL Database very easily</h3>
 
-<p>This is something like mongodb syntax :D</p>
+<p>This library will minified the code for database operations in web applications. I am working on it. It will be more useful for PHP Web Developers.</p>
 
 These are simple example below : 
 <br>
@@ -67,6 +67,33 @@ $base->insert("users", [
 ```
 <br>
 <br>
+<h2>Example : To insert multiple data into table</h2>
+
+```php
+$base->insertMore("users", [
+	[
+		'name' => 'Ehsan',
+		'email' => "email1@gmail.com",
+		'password' => '87654321'
+	],
+	[
+		'name' => 'Abthahi',
+		'email' => "email2@gmail.com",
+		'password' => '87654321'
+	],
+	[
+		'name' => 'Ishmam',
+		'email' => "email3@gmail.com",
+		'password' => '87654321'
+	],
+	[
+		'name' => 'Sakib',
+		'email' => "email4@gmail.com",
+		'password' => '87654321'
+	],
+]);
+```
+
 <h2>Example : To select data from table</h2>
 
 ```php
