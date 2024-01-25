@@ -1,7 +1,5 @@
 <?php
-
 	include 'eazybase.php';
-
 
 	$base = new EazyBase("localhost", "root", "12345678");
 
@@ -11,14 +9,20 @@
 		echo "Not Connected!<br>";
 	}
 
-	if ($base->createBase("mytest2")){
-		echo "Database Created!";
-	}else{
-		echo "Database Not Created!";
-	}
-	echo $base->getError();
+	// if ($base->createBase("mytest2")){
+	// 	echo "Database Created!";
+	// }else{
+	// 	echo "Database Not Created!";
+	// }
+	// echo $base->getError();
 
-	$base->selectBase("mytest");
+	$base->selectBase("mytest2");
+
+	// if ($base->importToBase("./turf_booking.sql")){
+	// 	echo "Database imported!";
+	// }else{
+	// 	echo "Database not imported!";
+	// }
 
 	// $result = $base->createTable("products", [
 	// 	'id' => 'int not null auto_increment',
@@ -94,11 +98,11 @@
 	// echo $data;
 	// echo "</pre>";
 
-	$base->update("users", [
-		'name' => 'Abthahi'
-	], [
-		'name' => ['=', 'abtahi16']
-	]);
+	// $base->update("users", [
+	// 	'name' => 'Abthahi'
+	// ], [
+	// 	'name' => ['=', 'abtahi16']
+	// ]);
 
 	// echo "Last ID : " . $base->lastInsertID();
 

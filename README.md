@@ -150,6 +150,38 @@ echo "</pre>";
 ```
 <br>
 <br>
+<h2>To select data with logical operator like and/or : </h2>
+
+```php
+$data = $base->select("users", [], ['ASC', 'id'], [0, 60], [
+	'or' => [
+		'name' => ['=', 'Abthahi'],	
+		'email' => ['=', 'email30@gmail.com'],	
+	],
+	'and' => [
+		'name' => ['=', 'Abthahi'],	
+		'email' => ['=', 'email30@gmail.com'],	
+	],
+]);
+echo "<pre>";
+print_r($data);
+echo "</pre>";
+```
+<br>
+<br>
+
+<h2>Example : To import sql files to newly created database</h2>
+
+```php
+if ($base->importToBase("./filename.sql")){
+	echo "Database imported!";
+}else{
+	echo "Database not imported!";
+}
+```
+
+<br>
+<br>
 <h2>Example : To update data in a table</h2>
 
 ```php

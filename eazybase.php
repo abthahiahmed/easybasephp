@@ -1,7 +1,4 @@
 <?php
-	
-	
-
 	class EazyBase{
 		private $host;
 		private $user;
@@ -54,6 +51,29 @@
 
 			if($this->db->query($sql)) return true;
 			return false;
+		}
+
+		function importToBase($filename){
+			if (!file_exists($filename)) return false;
+			$lines = file($filename);
+			$tmpline = '';
+			$success = false;
+			foreach ($lines as $line){
+				if (substr($line, 0, 2) === '--' || $line === ''){
+					continue;
+				}
+				$tmpline .= $line;
+				if (substr(trim($line), -1, 1) === ';'){
+					if ($this->db->query($tmpline)){
+						$success = true;
+						
+					}else{
+						$success = false;
+					}
+					$tmpline = '';
+				}
+			}
+			return $success;
 		}
 
 
@@ -462,7 +482,11 @@
 		}
 
 		function getError(){
-			return $this->db->error();
+			return $this->db->error;
+		}
+
+		function close(){
+			$this->db->close();
 		}
 
 	}
