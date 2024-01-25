@@ -10,8 +10,8 @@ These are simple example below :
 ```php
 $base = new EazyBase("localhost", "root", "12345678");
 ```
+
 <br>
-Example : To connect with database
 <br>
 <h2>Example : To connect with database</h2>
 
@@ -22,6 +22,8 @@ if ($base->connect()){
 	echo "Not Connected!<br>";
 }
 ```
+
+<br>
 <br>
 <h2>Example : To create database</h2>
 
@@ -32,6 +34,7 @@ if ($base->createBase("mytest")){
 	echo "Database Not Created!";
 }
 ```
+
 <br>
 <h2>Example : To create database</h2>
 
@@ -47,22 +50,23 @@ if ($base->createBase("mytest")){
 <h2>Example : To create table</h2>
 
 ```php
-$result = $base->createTable("users", [
-	'id' => 'int not null auto_increment',
-	'name' => 'varchar(255)',
-	'email' => 'varchar(255)',
-	'password' => 'varchar(255)',
-],'id');
+$result = $base->createTable("users", [ // Table Name
+	'id' => 'int not null auto_increment', //// Column name => Data type with Auto increament
+	'name' => 'varchar(255)', // Column name => Data type
+	'email' => 'varchar(255)', // Column name => Data type
+	'password' => 'varchar(255)', // Column name => Data type
+],'id'); // Primary key
 ```
+
 <br>
 <br>
 <h2>Example : To insert data into table</h2>
 
 ```php
-$base->insert("users", [
-	'name' => 'myname',
-	'email' => "email@gmail.com",
-	'password' => '87654321'
+$base->insert("users", [// Table Name
+	'name' => 'myname', //Column => Data
+	'email' => "email@gmail.com", //Column => Data
+	'password' => '87654321' //Column => Data
 ]);
 ```
 <br>
@@ -70,26 +74,26 @@ $base->insert("users", [
 <h2>Example : To insert multiple data into table</h2>
 
 ```php
-$base->insertMore("users", [
+$base->insertMore("users", [ //Table Name
 	[
-		'name' => 'Ehsan',
-		'email' => "email1@gmail.com",
-		'password' => '87654321'
+		'name' => 'Ehsan', //Column => Data
+		'email' => "email1@gmail.com", //Column => Data
+		'password' => '87654321' //Column => Data
 	],
 	[
-		'name' => 'Abthahi',
-		'email' => "email2@gmail.com",
-		'password' => '87654321'
+		'name' => 'Abthahi', //Column => Data
+		'email' => "email2@gmail.com", //Column => Data
+		'password' => '87654321' //Column => Data
 	],
 	[
-		'name' => 'Ishmam',
-		'email' => "email3@gmail.com",
-		'password' => '87654321'
+		'name' => 'Ishmam', //Column => Data
+		'email' => "email3@gmail.com", //Column => Data
+		'password' => '87654321' //Column => Data
 	],
 	[
-		'name' => 'Sakib',
-		'email' => "email4@gmail.com",
-		'password' => '87654321'
+		'name' => 'Sakib', //Column => Data
+		'email' => "email4@gmail.com", //Column => Data
+		'password' => '87654321' //Column => Data
 	],
 ]);
 ```
@@ -118,7 +122,7 @@ echo "</pre>";
 
 ```php
 $data = $base->select("users", ['name', 'email'], [], [], [	
-	'email' => ['=', 'email@gmail.com'],
+	'email' => ['=', 'email@gmail.com'], // Column => [Operator, Data]
 ]);
 echo "<pre>";
 print_r($data);
@@ -130,7 +134,7 @@ echo "</pre>";
 
 ```php
 $data = $base->select("users", ['name', 'email'], ['ASC', 'id'], [], [	
-	'email' => ['=', 'email@gmail.com'],
+	'email' => ['=', 'email@gmail.com'],// Column => [Operator, Data]
 ]);
 echo "<pre>";
 print_r($data);
@@ -141,8 +145,12 @@ echo "</pre>";
 <h2>Example : To select data from table with limitation</h2>
 
 ```php
-$data = $base->select("users", ['name', 'email'], ['ASC', 'id'], [0, 50], [	
-	'email' => ['=', 'email@gmail.com'],
+$data = $base->select("users", 
+	['name', 'email'], // Fields
+	['ASC', 'id'], // Ordering Column
+	[0, 50], // Limit
+	[	
+	'email' => ['=', 'email@gmail.com'], // Column => [Operator, Data]
 ]);
 echo "<pre>";
 print_r($data);
@@ -154,13 +162,13 @@ echo "</pre>";
 
 ```php
 $data = $base->select("users", [], ['ASC', 'id'], [0, 60], [
-	'or' => [
-		'name' => ['=', 'Abthahi'],	
-		'email' => ['=', 'email30@gmail.com'],	
+	'or' => [ // Logic Operator
+		'name' => ['=', 'Abthahi'],	// Column => [Operator, Data]
+		'email' => ['=', 'email30@gmail.com'],	// Column => [Operator, Data]
 	],
-	'and' => [
-		'name' => ['=', 'Abthahi'],	
-		'email' => ['=', 'email30@gmail.com'],	
+	'and' => [ // Logic Operator
+		'name' => ['=', 'Abthahi'],	// Column => [Operator, Data]
+		'email' => ['=', 'email30@gmail.com'],	// Column => [Operator, Data]
 	],
 ]);
 echo "<pre>";
@@ -186,9 +194,9 @@ if ($base->importToBase("./filename.sql")){
 
 ```php
 $base->update("users", [
-	'name' => 'New Name'
+	'name' => 'New Name'// Column => Data
 ], [
-	'name' => ['=', 'Current Name']
+	'name' => ['=', 'Current Name'] // Column => [Operator, Data]
 ]);
 ```
 <br>
@@ -198,11 +206,11 @@ $base->update("users", [
 ```php
 // With equal operator (=)
 $base->delete("users", [
-	'id' => ['=', 1]]
+	'id' => ['=', 1]]// Column => [Operator, Data]
 ]);
 // With in operator (in)
 $base->delete("users", [
-	'id' => ['in', [1, 2, 3]]
+	'id' => ['in', [1, 2, 3]]// Column => [Operator, Data(Array)]
 ]);
 ```
 

@@ -29,14 +29,22 @@
 		}
 
 		function selectBase($name){
+			if (empty($name)) return false;
 			$this->db->select_db($name);
 			$this->name = $name;
+		}
+		function deleteBase($name){
+			if (empty($name)) return false;
+			$sql = "DROP DATABASE $name;";
+			if($this->db->query($sql)) return true;
+			return false;
 		}
 
 
 		function createTable($name, $data, $primary){
+			if (empty($name)) return false;
 			if (!is_array($data)) return false;
-
+			
 			$columns 	= array_keys($data);
 			$types 		= array_values($data);
 
@@ -49,6 +57,13 @@
 			$sql 		.= "PRIMARY KEY ($primary)";
 			$sql 		.= ");";
 
+			if($this->db->query($sql)) return true;
+			return false;
+		}
+
+		function deleteTable($name){
+			if (empty($name)) return false;
+			$sql = "DROP TABLE $name;";
 			if($this->db->query($sql)) return true;
 			return false;
 		}
