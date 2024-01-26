@@ -8,6 +8,7 @@ These are simple example below :
 <h2>Example : To initialize all the cradentials for database connection.</h2>
 
 ```php
+include 'eazybase.php';
 $base = new EazyBase("localhost", "root", "12345678");
 ```
 
