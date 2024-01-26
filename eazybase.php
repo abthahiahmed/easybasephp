@@ -61,6 +61,83 @@
 			return false;
 		}
 
+		function addColumn($name, $data){
+			if (empty($name)) return false;
+			if (!is_array($data)) return false;
+			
+			$columns 	= array_keys($data);
+			$types 		= array_values($data);
+
+			$sql 		= "ALTER TABLE $name ";
+			
+			for ($i = 0; $i < count($columns); $i++){
+				$sql 	.= "ADD {$columns[$i]} {$types[$i]},";
+			}
+			$sql 		= substr($sql, 0, -1);
+			$sql 		.= ";";
+
+			if($this->db->query($sql)) return true;
+			return false;
+		}
+		
+		function changeColumn($name, $data){
+			if (empty($name)) return false;
+			if (!is_array($data)) return false;
+			
+			$columns 	= array_keys($data);
+			$types 		= array_values($data);
+
+			$sql 		= "ALTER TABLE $name ";
+			
+			for ($i = 0; $i < count($columns); $i++){
+				$sql 	.= "MODIFY COLUMN {$columns[$i]} {$types[$i]},";
+			}
+			$sql 		= substr($sql, 0, -1);
+			$sql 		.= ";";
+
+			if($this->db->query($sql)) return true;
+			return false;
+		}
+
+
+		function deleteColumn($name, $data){
+			if (empty($name)) return false;
+			if (!is_array($data)) return false;
+			
+			$columns 	= $data;
+
+			$sql 		= "ALTER TABLE $name ";
+			
+			for ($i = 0; $i < count($columns); $i++){
+				$sql 	.= "DROP COLUMN {$columns[$i]},";
+			}
+			$sql 		= substr($sql, 0, -1);
+			$sql 		.= ";";
+
+			if($this->db->query($sql)) return true;
+			return false;
+		}
+
+		function renameColumn($name, $data){
+			if (empty($name)) return false;
+			if (!is_array($data)) return false;
+			
+			$old 	= array_keys($data);
+			$new 		= array_values($data);
+
+			$sql 		= "ALTER TABLE $name ";
+			
+			for ($i = 0; $i < count($old); $i++){
+				$sql 	.= "RENAME COLUMN {$old[$i]} TO {$new[$i]},";
+			}
+			$sql 		= substr($sql, 0, -1);
+			$sql 		.= ";";
+
+			if($this->db->query($sql)) return true;
+			return false;
+		}
+
+
 		function deleteTable($name){
 			if (empty($name)) return false;
 			$sql = "DROP TABLE $name;";

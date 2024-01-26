@@ -16,7 +16,13 @@
 	// }
 	// echo $base->getError();
 
-	$base->selectBase("mytest2");
+	$base->selectBase("mytest");
+
+	// $base->changeColumn("users", [
+	// 	'fullname' => 'varchar(1024)',
+	// 	'v_code' => 'varchar(1024)',
+	// ]);
+
 
 	// if ($base->importToBase("./turf_booking.sql")){
 	// 	echo "Database imported!";

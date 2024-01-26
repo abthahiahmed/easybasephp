@@ -34,19 +34,33 @@ if ($base->createBase("mytest")){
 	echo "Database Not Created!";
 }
 ```
-
 <br>
-<h2>Example : To create database</h2>
+<br>
+<h2>Example : To drop a database</h2>
 
 ```php
-if ($base->createBase("mytest")){
-	echo "Database Created!";
+if ($base->deleteBase("mytest")){
+	echo "Database Deleted!";
 }else{
-	echo "Database Not Created!";
+	echo "Database Not Deleted!";
 }
 ```
 <br>
 <br>
+
+<h2>Example : To import sql files to newly created database</h2>
+
+```php
+if ($base->importToBase("./filename.sql")){
+	echo "Database imported!";
+}else{
+	echo "Database not imported!";
+}
+```
+
+<br>
+<br>
+
 <h2>Example : To create table</h2>
 
 ```php
@@ -60,6 +74,84 @@ $result = $base->createTable("users", [ // Table Name
 
 <br>
 <br>
+<h2>Example : To add column to table</h2>
+
+```php
+// Single
+$base->addColumn("mytest", [
+	'column_name' => 'data_type'
+]);
+
+// Multiple
+$base->addColumn("mytest", [
+	'column_name1' => 'data_type',
+	'column_name2' => 'data_type',
+	'column_name3' => 'data_type',
+]);
+```
+<br>
+<br>
+<h2>Example : To modify data type of column</h2>
+
+```php
+// Single
+$base->changeColumn("mytest", [
+	'column_name' => 'data_type'
+]);
+
+// Multiple
+$base->changeColumn("mytest", [
+	'column_name1' => 'data_type',
+	'column_name2' => 'data_type',
+	'column_name3' => 'data_type',
+]);
+```
+<br>
+<br>
+<h2>Example : To rename column</h2>
+
+```php
+// Single
+$base->renameColumn("mytest", [
+	'old_name' => 'new_name'
+]);
+
+// Multiple
+$base->renameColumn("mytest", [
+	'old_name' => 'new_name',
+	'old_name' => 'new_name',
+	'old_name' => 'new_name',
+]);
+```
+<br>
+<br>
+<h2>Example : To delete column</h2>
+
+```php
+// Single
+$base->deleteColumn("mytest", [
+	'column_name'
+]);
+
+// Multiple
+$base->deleteColumn("mytest", [
+	'column_name1',
+	'column_name2',
+	'column_name3',
+]);
+```
+<br>
+<br>
+<h2>Example : To delete table</h2>
+
+```php
+$base->deleteTable("mytest");
+
+```
+<br>
+<br>
+
+
 <h2>Example : To insert data into table</h2>
 
 ```php
@@ -178,18 +270,7 @@ echo "</pre>";
 <br>
 <br>
 
-<h2>Example : To import sql files to newly created database</h2>
 
-```php
-if ($base->importToBase("./filename.sql")){
-	echo "Database imported!";
-}else{
-	echo "Database not imported!";
-}
-```
-
-<br>
-<br>
 <h2>Example : To update data in a table</h2>
 
 ```php
@@ -213,6 +294,22 @@ $base->delete("users", [
 	'id' => ['in', [1, 2, 3]]// Column => [Operator, Data(Array)]
 ]);
 ```
+
+<br>
+<br>
+<h2>Example : To get last inserted id of table</h2>
+
+```php
+	echo "Last ID : " . $base->lastInsertID(); // Return last inserted ID
+```
+<br>
+<br>
+<h2>Example : To close database connection</h2>
+
+```php
+	$base->close(); // Close Connection
+```
+
 
 This is simple project which can help you to build PHP applications faster. 
 Happy Coding...
