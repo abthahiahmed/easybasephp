@@ -1,4 +1,4 @@
-<h1>EasyBase</h1>
+<h1>EasyBase 1.0</h1>
 <h3>EasyBase is a simple PHP library to use MySQL Database very easily</h3>
 
 <p>This library will minified the code for database operations in web applications. I am working on it. It will be more useful for PHP Web Developers.</p>
